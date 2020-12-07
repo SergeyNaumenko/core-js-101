@@ -205,8 +205,31 @@ function extractEmails(str) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+function getRectangleString(width, height) {
+  let result = '';
+  const startPosition = 1;
+  for (let i = startPosition; i <= height; i += 1) {
+    for (let j = startPosition; j <= width; j += 1) {
+      const position = i * j;
+      if (position === startPosition) {
+        result += '┌';
+      } else if (position === width && i === startPosition) {
+        result += '┐';
+      } else if (position === height && i === height) {
+        result += '└';
+      } else if (position === width * height && i === height) {
+        result += '┘';
+      } else if (i === startPosition || i === height) {
+        result += '─';
+      } else if (j === startPosition || j === width) {
+        result += '│';
+      } else {
+        result += ' ';
+      }
+    }
+    result += '\n';
+  }
+  return result;
 }
 
 
@@ -226,8 +249,32 @@ function getRectangleString(/* width, height */) {
  *    => 'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm'
  *
  */
-function encodeToRot13(/* str */) {
-  throw new Error('Not implemented');
+function encodeToRot13(str) {
+  const shift = 13;
+  const asciiLowerCaseShift = 97;
+  const alphabetLen = 26;
+
+  const getLowerCharCode = (char) => char.toLowerCase().charCodeAt();
+  const getShiftedCode = (code) => code - asciiLowerCaseShift;
+
+  const isLetter = (code) => code >= 0 && code <= alphabetLen;
+
+  return [...str].map((char) => {
+    const code = getShiftedCode(getLowerCharCode(char));
+
+    if (!isLetter(code)) {
+      return char;
+    }
+
+    let newCharCode = null;
+    if (code < alphabetLen / 2) {
+      newCharCode = char.charCodeAt() + shift;
+    } else {
+      newCharCode = char.charCodeAt() - shift;
+    }
+
+    return String.fromCharCode(newCharCode);
+  }).join('');
 }
 
 /**
@@ -272,8 +319,42 @@ function isString(value) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(/* value */) {
-  throw new Error('Not implemented');
+function getCardId(value) {
+  const cardPerSuit = 13;
+  const suits = {
+    '♣': 0,
+    '♦': 1,
+    '♥': 2,
+    '♠': 3,
+
+  };
+
+  const cards = {
+    A: 0,
+    2: 1,
+    3: 2,
+    4: 3,
+    5: 4,
+    6: 5,
+    7: 6,
+    8: 7,
+    9: 8,
+    10: 9,
+    J: 10,
+    Q: 11,
+    K: 12,
+  };
+
+  let card = null;
+  let suit = null;
+  if (value.length === 2) {
+    [card, suit] = [...value];
+  } else {
+    card = `${value[0]}${value[1]}`;
+    suit = `${value[2]}`;
+  }
+
+  return cardPerSuit * suits[suit] + cards[card];
 }
 
 
