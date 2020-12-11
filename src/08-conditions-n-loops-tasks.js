@@ -455,8 +455,27 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const isSlashFirst = pathes.every((path) => path[0] === '/');
+  const isPathWithoutFirstSlash = pathes.some((path) => path[0] !== '/');
+
+  if (!isSlashFirst && isPathWithoutFirstSlash) {
+    return '';
+  }
+
+  const splittedPathes = pathes.map((path) => path.split('/'));
+  const commonPath = [];
+
+  for (let i = 0; i < splittedPathes[0].length; i += 1) {
+    const piece = splittedPathes[0][i];
+    if (splittedPathes.every((item) => item[i] === piece)) {
+      commonPath.push(piece);
+    } else {
+      break;
+    }
+  }
+
+  return `${commonPath.join('/')}/`;
 }
 
 
@@ -478,8 +497,22 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const matrixes = [m1, m2];
+  const cols = matrixes.map((matrix) => matrix[0].length);
+  if (!matrixes.every((matrix, index) => matrix.every((row) => row.length === cols[index]))) {
+    throw Error('Some rows have different columns');
+  }
+
+  if (cols[0] !== m2.length) {
+    throw new Error('Amount of rows in matrix1 should be equal amount of columns in matrix2');
+  }
+
+  return m1.map((m1Row) => m2[0].map(
+    (_, columnIndex) => m1Row.reduce(
+      (acc, item, rowM2Index) => acc + item * m2[rowM2Index][columnIndex], 0,
+    ),
+  ));
 }
 
 
