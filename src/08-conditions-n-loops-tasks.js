@@ -546,8 +546,40 @@ function getMatrixProduct(m1, m2) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const checkWinner = (char, board) => {
+    const winMap = [
+      '012', '345', '678',
+      '036', '147', '258',
+      '048', '246',
+    ];
+
+    return winMap.some((comb) => {
+      const [ind0, ind1, ind2] = comb.split('');
+      return board[ind0] === char
+        && board[ind1] === char
+        && board[ind2] === char;
+    });
+  };
+
+  const board = position.map((row) => {
+    if (row.length < 3) {
+      return [...row, undefined];
+    }
+    return row;
+  }).flat();
+  const X = 'X';
+  const O = '0';
+
+  if (checkWinner(X, board)) {
+    return X;
+  }
+
+  if (checkWinner(O, board)) {
+    return O;
+  }
+
+  return undefined;
 }
 
 
